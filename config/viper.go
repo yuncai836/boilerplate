@@ -4,9 +4,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-func InitViperLocal() error {
+func InitViperLocalByEnv() error {
 	var v = ReadEnvConfig[ViperConfig]()
 	viper.SetConfigFile(v.ConfigPath)
+	return viper.ReadInConfig()
+}
+
+func InitViperLocalByPath(path string) error {
+	viper.SetConfigFile(path)
 	return viper.ReadInConfig()
 }
 
