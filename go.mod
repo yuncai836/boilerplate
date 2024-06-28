@@ -1,4 +1,4 @@
-module github.com/yuncai836/toolkit
+module github.com/yuncai836/boilerpates
 
 go 1.22.4
 
