@@ -1,4 +1,4 @@
-module github.com/yuncai836/boilerpates
+module github.com/yuncai836/boilerplates
 
 go 1.22.4
 
