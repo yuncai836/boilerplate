@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/philchia/agollo/v4"
 	"gopkg.in/yaml.v3"
+	"strings"
 )
 
 func MustInitApolloClient(logger agollo.Logger) {
@@ -27,7 +28,9 @@ func InitApolloClient(logger agollo.Logger) error {
 func ApolloGet[T any](namespace string) (*T, error) {
 	var content = agollo.GetContent(agollo.WithNamespace(namespace))
 	var t = new(T)
-	var err = yaml.Unmarshal([]byte(content), t)
+	de := yaml.NewDecoder(strings.NewReader(content))
+	de.KnownFields(true)
+	var err = de.Decode(t)
 	return t, err
 }
 
