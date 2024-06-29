@@ -24,10 +24,15 @@ func InitApolloClient(logger agollo.Logger) error {
 	return agollo.Start(&appConfig, agollo.WithLogger(logger), agollo.SkipLocalCache())
 }
 
-func ApolloMustGet[T any](namespace string) *T {
+func ApolloGet[T any](namespace string) (*T, error) {
 	var content = agollo.GetContent(agollo.WithNamespace(namespace))
 	var t = new(T)
-	err := yaml.Unmarshal([]byte(content), t)
+	var err = yaml.Unmarshal([]byte(content), t)
+	return t, err
+}
+
+func ApolloMustGet[T any](namespace string) *T {
+	t, err := ApolloGet[T](namespace)
 	if err != nil {
 		panic(err)
 	}

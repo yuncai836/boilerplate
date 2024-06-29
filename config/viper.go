@@ -26,9 +26,14 @@ func MustInitViperLocalByEnv() {
 	}
 }
 
-func ViperMustGetAll[T any]() *T {
+func ViperGetAll[T any]() (*T, error) {
 	var t = new(T)
-	err := viper.Unmarshal(t)
+	var err = viper.Unmarshal(t)
+	return t, err
+}
+
+func ViperMustGetAll[T any]() *T {
+	t, err := ViperGetAll[T]()
 	if err != nil {
 		panic(err)
 	}

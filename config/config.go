@@ -1,6 +1,9 @@
 package config
 
-import "github.com/ilyakaznacheev/cleanenv"
+import (
+	"errors"
+	"github.com/ilyakaznacheev/cleanenv"
+)
 
 type Apollo struct {
 	MetaAddr        string   `yaml:"meta_addr" env:"apollo_addr"`
@@ -34,4 +37,26 @@ func ReadEnvConfig[T any]() *T {
 		panic(err)
 	}
 	return a
+}
+
+func Get[T any](namespace string) (*T, error) {
+	t, err0 := ApolloGet[T](namespace)
+	if err0 == nil {
+		return t, nil
+	}
+
+	t, err1 := ViperGetAll[T]()
+	if err1 == nil {
+		return t, nil
+	}
+
+	return nil, errors.Join(err0, err1)
+}
+
+func MustGet[T any](namespace string) *T {
+	if t, err := Get[T](namespace); err != nil {
+		panic(err)
+	} else {
+		return t
+	}
 }
