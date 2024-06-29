@@ -2,18 +2,17 @@ package config
 
 import (
 	"github.com/philchia/agollo/v4"
-	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )
 
-func MustInitApolloClient(logger *zap.SugaredLogger) {
+func MustInitApolloClient(logger agollo.Logger) {
 	err := InitApolloClient(logger)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func InitApolloClient(logger *zap.SugaredLogger) error {
+func InitApolloClient(logger agollo.Logger) error {
 	var a = ReadEnvConfig[Apollo]()
 	appConfig := agollo.Conf{
 		AppID:           a.AppId,
