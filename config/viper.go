@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 )
 
@@ -26,9 +27,14 @@ func MustInitViperLocalByEnv() {
 	}
 }
 
+// ViperGetAll 解析配置到结构，硬编码了 yaml 格式。
 func ViperGetAll[T any]() (*T, error) {
 	var t = new(T)
-	var err = viper.Unmarshal(t)
+	unmarshalOptions := viper.DecoderConfigOption(func(decoderConfig *mapstructure.DecoderConfig) {
+		decoderConfig.TagName = "yaml"
+	})
+	viper.SetConfigType("yaml")
+	var err = viper.Unmarshal(t, unmarshalOptions)
 	return t, err
 }
 
