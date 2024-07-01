@@ -13,7 +13,7 @@ func GracefulServe[T any](c *T, cs chan *T, spawner func(c *T) (func(), error)) 
 	signal.Notify(ss, os.Interrupt)
 	shutdown, err := spawner(c)
 	if err != nil {
-		otelzap.L().Error("create grpc serve task fail", zap.Error(err))
+		otelzap.L().Error("spawn serve task fail", zap.Error(err))
 		return
 	}
 	for {
@@ -22,7 +22,7 @@ func GracefulServe[T any](c *T, cs chan *T, spawner func(c *T) (func(), error)) 
 			shutdown()
 			shutdown, err = spawner(c)
 			if err != nil {
-				otelzap.L().Error("reload grpc server fail", zap.Error(err), zap.Any("config", c))
+				otelzap.L().Error("reload server fail", zap.Error(err), zap.Any("config", c))
 			}
 		case s := <-ss:
 			otelzap.L().Info("receive os signal", zap.String("signal", s.String()))
