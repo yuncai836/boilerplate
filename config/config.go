@@ -1,8 +1,13 @@
 package config
 
 import (
+	"context"
 	"errors"
 	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/philchia/agollo/v4"
+	"github.com/uptrace/opentelemetry-go-extra/otelzap"
+	"github.com/yuncai836/boilerplates/otel"
+	"go.uber.org/zap"
 )
 
 type Apollo struct {
@@ -58,5 +63,24 @@ func MustGet[T any](namespace string) *T {
 		panic(err)
 	} else {
 		return t
+	}
+}
+func ConfigUpdateEventStream[T any](namespace string) (chan *T, func()) {
+	var msg = make(chan *T, 1)
+	agollo.OnUpdate(func(event *agollo.ChangeEvent) {
+		ctx, span := otel.Tracer.Start(context.Background(), "apollo config update")
+		defer span.End()
+		conf, err := ApolloGet[T](namespace)
+		if err != nil {
+			otelzap.L().ErrorContext(ctx, "apollo client get config fail", zap.Error(err))
+			return
+		}
+		otelzap.L().InfoContext(ctx, "apollo config update success")
+		msg <- conf
+	})
+	return msg, func() {
+		err := agollo.Stop()
+		otelzap.L().Warn("stop apollo config sync fail", zap.Error(err))
+		close(msg)
 	}
 }
