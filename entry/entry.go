@@ -25,6 +25,7 @@ func GracefulServe[T any](c *T, cs chan *T, spawner func(ctx context.Context, c 
 	for {
 		select {
 		case c = <-cs:
+			var ctx = context.Background()
 			ctx, span := otel.Tracer.Start(ctx, "graceful server reload")
 			shutdown()
 			shutdown, err = spawner(ctx, c)
