@@ -41,3 +41,7 @@ func (e Error) Code(c Code) Error {
 	e.code = c
 	return e
 }
+
+func (e Error) GetCode() Code {
+	return e.code
+}
