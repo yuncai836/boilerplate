@@ -19,7 +19,10 @@ func Msg(msg string) Error {
 }
 
 func (e Error) Error() string {
-	return fmt.Sprintf("(%s) [cause by] (%s)", e.message, e.inner.Error())
+	if e.inner != nil {
+		return fmt.Sprintf("(%s) [cause by] (%s)", e.message, e.inner.Error())
+	}
+	return fmt.Sprintf("(%s)", e.message)
 }
 
 func (e Error) Walk(f func(err Error)) {
